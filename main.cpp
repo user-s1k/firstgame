@@ -10,7 +10,7 @@ unsigned int windowH = 1080;
 float spawnW = windowH;
 float scale = 0.2f;
 
-
+sf::RenderWindow window;
 sf::FloatRect bounds;
 sf::Texture playerTexture;
 sf::Sprite player(playerTexture);
@@ -33,14 +33,21 @@ int main()
     }
     player.setTexture(playerTexture, true);
 
-
-    player.setScale({ scale, scale });
-    bounds = player.getGlobalBounds();
-    playerXy = sf::Vector2f(0.f, (float)windowH - bounds.size.y);
     
 
+    
+   
+    playerXy = sf::Vector2f(0.f, (float)windowH - bounds.size.y);
+    
+    sf::FloatRect localBounds = player.getGlobalBounds();
+    player.setOrigin(sf::Vector2f( localBounds.size.x /  2.f, localBounds.size.y /  2.f));
+
+    bounds = player.getGlobalBounds();
+    player.setScale({ scale, scale });
+
     // создаем окно 
-    sf::RenderWindow window(sf::VideoMode({windowW, windowH}), "MyFirstGame");
+    window.create(sf::VideoMode({ windowW, windowH }), "MyFirstGame");
+        
 
     // главный игровой цикл
     while(window.isOpen())

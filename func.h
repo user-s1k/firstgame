@@ -8,6 +8,8 @@ extern unsigned int windowH;
 extern float spawnW;
 extern float scale;
 extern sf::FloatRect bounds;
+extern sf::RenderWindow window;
+extern sf::Texture playerTexture;
 
 extern sf::Sprite player;
 extern sf::Vector2f playerXy;

@@ -2,14 +2,22 @@
 #include <iostream>
 #include "func.h"
 
-
 sf::Vector2f playerXy;
+//sf::Angle playerRotation = sf::degrees(300.f);
+extern sf::Texture playerTexture;
 
 void playerLogic() {
 
-    float time = timer.restart().asSeconds(); 
+    sf::Vector2i mousePos = sf::Mouse::getPosition(window); // ищем позицию курсора
+    sf::Vector2f mousePosF = sf::Vector2f(mousePos); // перевод в флоат
+    sf::Vector2f distan = mousePosF - player.getPosition(); // расстояние между мышью и центром игрока
 
-    // позиция и размер 
+    sf::Angle angle = sf::radians(std::atan2(distan.y, distan.x)); // угол поворота
+
+    player.setRotation(angle); // приминяем к игроку
+
+    float time = timer.restart().asSeconds();  
+
 
     
 
@@ -24,6 +32,7 @@ void playerLogic() {
     // движение вниз
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
         playerXy.y += time * 300.f;
+        
     }
 
     // движение вверх
@@ -42,16 +51,16 @@ void playerLogic() {
 
     // какаета хуйня
     
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-        scale += time * 1.f;
-    }
+    //if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+    //    scale += time * 1.f;
+    //}
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl)) {
-        scale -= time * 1.f;
-        if (scale <= 0.05f) { 
-            scale = 0.05f;
-        }
-    }
+    //if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl)) {
+    //    scale -= time * 1.f;
+    //    if (scale <= 0.05f) { 
+    //        scale = 0.05f;
+    //    }
+    //}
     
 
 
@@ -60,20 +69,28 @@ void playerLogic() {
 
     // защита от убегания за пустоту(кривая косая)
 
-    if (playerXy.x < -90.f) {
-        playerXy.x = windowH + 210.f;
+    // Вычисляем текущие половинки размеров игрока на экране
+    float halfW = (playerTexture.getSize().x * scale) / 2.f;
+    float halfH = (playerTexture.getSize().y * scale) / 2.f;
+
+    // полетел за левый появился за правым
+    if (playerXy.x + halfW < 0.f) {
+        playerXy.x = (float)windowW + halfW;
     }
 
-    if (playerXy.y < -90.f) {
-        playerXy.y = windowW - 210.f;
-    }
-     
-    if (playerXy.x + bounds.size.x - 90.f > windowW) {
-        playerXy.x = -90.f;
+    // улетез за правый появился за левым
+    if (playerXy.x - halfW > (float)windowW) {
+        playerXy.x = -halfW;
     }
 
-    if (playerXy.y + bounds.size.y - 90.f > windowH) {
-        playerXy.y = -90.f;
+    // улетел за верхний край появился за нижним 
+    if (playerXy.y + halfH < 0.f) {
+        playerXy.y = (float)windowH + halfH;
+    }
+
+    // улетел за нижний край появиться за верхнем
+    if (playerXy.y - halfH > (float)windowH) {
+        playerXy.y = -halfH;
     }
   
 
